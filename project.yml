@@ -1,0 +1,85 @@
+title: "zmbNER"
+
+description: "This project lets you train a named entity recognition (NER) model from a corpus comprised of news articles on racial discrimination. It takes care of downloading the corpus, converting it to spacy's format, training, and evaluating the model."
+
+# Variables can be referenced across the project.yml using ${vars.var_name}
+vars:
+  config: "pt_default"
+  lang: "pt"
+  treebank: "zmb-treebank"
+  train_name: "train-data"
+  dev_name: "train-data"
+  test_name: "eval-data"
+  package_name: "zmbNER"
+  package_version: "0.0.0"
+  gpu: 0
+
+# These are the directories that the project needs. The project CLI will make
+# sure that they always exist.
+directories: ["assets", "training", "metrics", "configs", "packages"]
+
+assets:
+  - dest: "assets/${vars.treebank}"
+    git:
+      repo: "https://github.com/Zumbi-ML/${vars.treebank}"
+      branch: "main"
+      path: ""
+
+workflows:
+  all:
+    - preprocess 
+    - train
+    - evaluate
+    - package
+
+commands:
+  - name: preprocess
+    help: "Convert the data to spacy's format"
+    script:
+      - "mkdir -p corpus/${vars.treebank}"
+      - "python -m spacy convert assets/${vars.treebank}/${vars.train_name}.json corpus/${vars.treebank}/"
+      #- "python -m spacy convert assets/${vars.treebank}/${vars.dev_name}.json corpus/${vars.treebank}/"
+      - "python -m spacy convert assets/${vars.treebank}/${vars.test_name}.json corpus/${vars.treebank}/"
+    deps:
+      - "assets/${vars.treebank}/${vars.train_name}.json"
+      - "assets/${vars.treebank}/${vars.test_name}.json"
+    outputs:
+      - "corpus/${vars.treebank}/${vars.train_name}.spacy"
+      - "corpus/${vars.treebank}/${vars.dev_name}.spacy"
+      - "corpus/${vars.treebank}/${vars.test_name}.spacy"
+
+  - name: train
+    help: "Train ${vars.treebank}"
+    script:
+      - "python -m spacy train configs/${vars.config}.cfg --output training/${vars.treebank} --gpu-id ${vars.gpu} --paths.dev corpus/${vars.treebank}/${vars.train_name}.spacy --paths.train corpus/${vars.treebank}/${vars.train_name}.spacy --nlp.lang=${vars.lang}"
+    deps:
+      - "corpus/${vars.treebank}/${vars.train_name}.spacy"
+      - "configs/${vars.config}.cfg"
+    outputs:
+      - "training/${vars.treebank}/model-best"
+
+  - name: evaluate
+    help: "Evaluate on the test data and save the metrics"
+    script:
+      - "python -m spacy evaluate ./training/${vars.treebank}/model-best ./corpus/${vars.treebank}/${vars.test_name}.spacy --output ./metrics/${vars.treebank}.json --gpu-id ${vars.gpu}"
+    deps:
+      - "training/${vars.treebank}/model-best"
+      - "corpus/${vars.treebank}/${vars.test_name}.spacy"
+    outputs:
+      - "metrics/${vars.treebank}.json"
+
+  - name: package
+    help: "Package the trained model so it can be installed"
+    script:
+      - "python -m spacy package training/${vars.treebank}/model-best packages --name ${vars.package_name} --version ${vars.package_version} --force"
+    deps:
+      - "training/${vars.treebank}/model-best"
+    outputs_no_cache:
+      - "packages/${vars.lang}_${vars.package_name}-${vars.package_version}/dist/pt_${vars.package_name}-${vars.package_version}.tar.gz"
+
+  - name: clean
+    help: "Remove intermediate files"
+    script:
+      - "rm -rf training/*"
+      - "rm -rf metrics/*"
+      - "rm -rf corpus/*"
