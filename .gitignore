@@ -1,5 +1,2 @@
-*.lock
-assets
-training
-corpus
-packages
+__pycache__/
+teste*.py

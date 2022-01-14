@@ -1,0 +1,3 @@
+[console_scripts]
+zmbner = zmbner.cli:main
+
