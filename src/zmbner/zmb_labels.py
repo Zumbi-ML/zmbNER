@@ -87,7 +87,7 @@ class ZmbLabels:
                                    (len(known_uses_lst) == 1 and \
                                    known_uses_lst[0] != ZmbLabels.PEOPLE.api())
 
-            if (len(an_entity) < 4 or is_known_as_sth_else):
+            if (an_entity.isupper() or is_known_as_sth_else):
                 return False
 
             return True
@@ -103,6 +103,15 @@ class ZmbLabels:
 
                 elif (ZmbLabels.EDUCATIONAL.is_known(an_entity)):
                     return ZmbLabels.EDUCATIONAL.api()
+
+                elif (ZmbLabels.MOVEMENT.is_known(an_entity)):
+                    return ZmbLabels.MOVEMENT.api()
+
+                elif (ZmbLabels.POLICE.is_known(an_entity)):
+                    return ZmbLabels.POLICE.api()
+
+                elif (ZmbLabels.POLITICAL.is_known(an_entity)):
+                    return ZmbLabels.POLITICAL.api()
 
                 return ZmbLabels.PRIVATE.api()
 
@@ -312,21 +321,6 @@ class ZmbLabels:
         elif (ZmbLabels.EDUCATIONAL.is_known(an_entity)):
             known_ent_lst.append(ZmbLabels.EDUCATIONAL.api())
 
-        elif (ZmbLabels.COUNTRY.is_known(an_entity)):
-            known_ent_lst.append(ZmbLabels.COUNTRY.api())
-
-        elif (ZmbLabels.STATE.is_known(an_entity)):
-            known_ent_lst.append(ZmbLabels.STATE.api())
-
-        elif (ZmbLabels.CITY.is_known(an_entity)):
-            known_ent_lst.append(ZmbLabels.CITY.api())
-
-        elif (ZmbLabels.MEDIA.is_known(an_entity)):
-            known_ent_lst.append(ZmbLabels.MEDIA.api())
-
-        elif (ZmbLabels.WORK.is_known(an_entity)):
-            known_ent_lst.append(ZmbLabels.WORK.api())
-
         elif (ZmbLabels.MOVEMENT.is_known(an_entity)):
             known_ent_lst.append(ZmbLabels.MOVEMENT.api())
 
@@ -335,6 +329,22 @@ class ZmbLabels:
 
         elif (ZmbLabels.POLITICAL.is_known(an_entity)):
             known_ent_lst.append(ZmbLabels.POLITICAL.api())
+
+        elif (ZmbLabels.CITY.is_known(an_entity)):
+            known_ent_lst.append(ZmbLabels.CITY.api())
+
+        elif (ZmbLabels.STATE.is_known(an_entity)):
+            known_ent_lst.append(ZmbLabels.STATE.api())
+
+        elif (ZmbLabels.COUNTRY.is_known(an_entity)):
+            known_ent_lst.append(ZmbLabels.COUNTRY.api())
+
+        elif (ZmbLabels.MEDIA.is_known(an_entity)):
+            known_ent_lst.append(ZmbLabels.MEDIA.api())
+
+        elif (ZmbLabels.WORK.is_known(an_entity)):
+            known_ent_lst.append(ZmbLabels.WORK.api())
+
 
         return known_ent_lst
 
