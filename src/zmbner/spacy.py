@@ -3,6 +3,7 @@
 import pt_zmbner
 from zmbner.zmb_labels import ZmbLabels
 import re
+from zmbner.utils import normalize
 
 nlp = pt_zmbner.load()
 
@@ -26,8 +27,9 @@ class ZmbNER:
 
         doc = nlp(sentence)
         for entity in doc.ents:
-            class_ = ZmbLabels.find_entity_class(entity.label_, entity.text)
-            if (class_.is_valid(entity.text)):
+            normalized_entity = normalize(entity.text)
+            class_ = ZmbLabels.find_entity_class(entity.label_, normalized_entity)
+            if (class_.is_valid(normalized_entity)):
                 label = class_.api()
                 if (not label in entities_map.keys()):
                     entities_map[label] = set()

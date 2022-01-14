@@ -282,9 +282,18 @@ class ZmbLabels:
             return None
 
         def is_known(an_entity):
+            states = ['al', 'am', 'ap', 'ba', 'ce', 'df', 'es', 'go', 'ma', 'mg', 'ms', 'mt', 'pa', 'pb', 'pe', 'pi', 'pr', 'rj', 'rn', 'ro', 'rr', 'rs', 'sc', 'se', 'sp', 'to']
+
             filepath = get_filename(ZmbLabels.POLITICAL.entity_name)
             known_lst = read_file(filepath)
-            return an_entity.lower() in known_lst
+
+            if (an_entity.lower() in known_lst):
+                return True
+
+            sep = " " # This separator has to match the one from normalization
+            state_political_parties = [party + sep + state for party in known_lst for state in states]
+
+            return an_entity.lower() in state_political_parties
 
         def is_valid(an_entity):
             return ZmbLabels.POLITICAL.is_known(an_entity)
@@ -350,6 +359,9 @@ class ZmbLabels:
 
             if (ZmbLabels.POLICE.is_known(an_entity)):
                 return ZmbLabels.POLICE
+
+            if (ZmbLabels.POLITICAL.is_known(an_entity)):
+                return ZmbLabels.POLITICAL
 
             # If we can't find an appropriate ORG, then we assume its a private ORG
             return ZmbLabels.PRIVATE
