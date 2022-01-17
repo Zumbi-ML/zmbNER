@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 
-import pt_zmbner
+import pt_zmbner_clf
 from zmbner.zmb_labels import ZmbLabels
 import re
 from zmbner.utils import normalize
 
-nlp = pt_zmbner.load()
+nlp = pt_zmbner_clf.load()
 
 def preprocess(text):
     """
@@ -19,7 +19,7 @@ def preprocess(text):
 
 class ZmbNER:
 
-    def extract_ents_from_a_sentence(sentence):
+    def extract_ents(sentence):
         """
         Returns the entities of a sentence
         """
@@ -37,7 +37,7 @@ class ZmbNER:
 
         return entities_map
 
-    def extract_ents_from_an_article(text, sep='\n'):
+    def ents(text, sep='\n'):
         """
         Returns the entities of an article's text
         Args:
@@ -48,7 +48,7 @@ class ZmbNER:
         entities_map = {}
 
         for sentence in text.split(sep):
-            sent_ents_map = ZmbNER.extract_ents_from_a_sentence(sentence)
+            sent_ents_map = ZmbNER.extract_ents(sentence)
             for label in sent_ents_map.keys():
                 if (not label in entities_map.keys()):
                     entities_map[label] = sent_ents_map[label]
