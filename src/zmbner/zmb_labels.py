@@ -21,6 +21,10 @@ class ZmbLabels:
         def is_valid(an_entity):
             return True
 
+        def is_handler(an_entity):
+            return ZmbLabels.SOURCE.is_known(an_entity)
+
+
     class MEDIA:
         entity_name = "MEDIA"
 
@@ -36,6 +40,9 @@ class ZmbLabels:
         def is_valid(an_entity):
             return True
 
+        def is_handler(an_entity):
+            return ZmbLabels.MEDIA.is_known(an_entity)
+
     class LAW:
         entity_name = "LAW"
 
@@ -50,6 +57,9 @@ class ZmbLabels:
 
         def is_valid(an_entity):
             return True
+
+        def is_handler(an_entity):
+            return ZmbLabels.LAW.is_known(an_entity)
 
     class MOVEMENT:
         entity_name = "MOVEMENT"
@@ -67,6 +77,9 @@ class ZmbLabels:
 
         def is_valid(an_entity):
             return True
+
+        def is_handler(an_entity):
+            return ZmbLabels.MOVEMENT.is_known(an_entity)
 
     class PEOPLE:
         entity_name = "PER"
@@ -92,12 +105,16 @@ class ZmbLabels:
 
             return True
 
+        def is_handler(an_entity):
+            return ZmbLabels.PEOPLE.is_known(an_entity)
+
     class ORG:
         entity_name = "ORG"
 
         def api(an_entity=None):
 
             if (an_entity):
+
                 if (ZmbLabels.PUBLIC.is_known(an_entity)):
                     return ZmbLabels.PUBLIC.api()
 
@@ -126,6 +143,9 @@ class ZmbLabels:
         def is_valid(an_entity):
             return True
 
+        def is_handler(an_entity):
+            return ZmbLabels.ORG.is_known(an_entity)
+
     class PRIVATE:
         entity_name = "PRIVATE"
 
@@ -149,6 +169,9 @@ class ZmbLabels:
                 return False
             return True
 
+        def is_handler(an_entity):
+            return ZmbLabels.PRIVATE.is_known(an_entity)
+
     class PUBLIC:
         entity_name = "PUBLIC"
 
@@ -166,6 +189,9 @@ class ZmbLabels:
         def is_valid(an_entity):
             return ZmbLabels.PUBLIC.is_known(an_entity)
 
+        def is_handler(an_entity):
+            return ZmbLabels.PUBLIC.is_known(an_entity)
+
     class EDUCATIONAL:
         entity_name = "EDUCATIONAL"
 
@@ -181,7 +207,17 @@ class ZmbLabels:
             return an_entity.lower() in known_lst
 
         def is_valid(an_entity):
-            return ZmbLabels.EDUCATIONAL.is_known(an_entity)
+            an_entity = an_entity.lower()
+
+            return ZmbLabels.EDUCATIONAL.is_known(an_entity) or \
+                    "university" in an_entity or \
+                    "universidade" in an_entity or \
+                    "colegio" in an_entity or \
+                    "college" in an_entity or \
+                    "escola" in an_entity
+
+        def is_handler(an_entity):
+            return ZmbLabels.EDUCATIONAL.is_valid(an_entity)
 
     class WORK:
         entity_name = "WORK"
@@ -198,6 +234,9 @@ class ZmbLabels:
         def is_valid(an_entity):
             return True
 
+        def is_handler(an_entity):
+            return ZmbLabels.WORK.is_known(an_entity)
+
     class COUNTRY:
         entity_name = "COUNTRY"
 
@@ -213,6 +252,9 @@ class ZmbLabels:
             return an_entity.lower() in known_lst
 
         def is_valid(an_entity):
+            return ZmbLabels.COUNTRY.is_known(an_entity)
+
+        def is_handler(an_entity):
             return ZmbLabels.COUNTRY.is_known(an_entity)
 
     class STATE:
@@ -232,6 +274,9 @@ class ZmbLabels:
         def is_valid(an_entity):
             return ZmbLabels.STATE.is_known(an_entity)
 
+        def is_handler(an_entity):
+            return ZmbLabels.STATE.is_known(an_entity)
+
     class CITY:
         entity_name = "CITY"
 
@@ -247,6 +292,9 @@ class ZmbLabels:
             return an_entity.lower() in known_lst
 
         def is_valid(an_entity):
+            return ZmbLabels.CITY.is_known(an_entity)
+
+        def is_handler(an_entity):
             return ZmbLabels.CITY.is_known(an_entity)
 
     class POLICE:
@@ -266,6 +314,9 @@ class ZmbLabels:
         def is_valid(an_entity):
             return ZmbLabels.POLICE.is_known(an_entity)
 
+        def is_handler(an_entity):
+            return ZmbLabels.POLICE.is_known(an_entity)
+
     class ACTION:
         entity_name = "ACTION"
 
@@ -280,6 +331,9 @@ class ZmbLabels:
 
         def is_valid(an_entity):
             return True
+
+        def is_handler(an_entity):
+            return ZmbLabels.ACTION.is_known(an_entity)
 
     class POLITICAL:
         entity_name = "POLITICAL"
@@ -305,6 +359,9 @@ class ZmbLabels:
             return an_entity.lower() in state_political_parties
 
         def is_valid(an_entity):
+            return ZmbLabels.POLITICAL.is_known(an_entity)
+
+        def is_handler(an_entity):
             return ZmbLabels.POLITICAL.is_known(an_entity)
 
     def is_known_as(an_entity):
@@ -358,19 +415,20 @@ class ZmbLabels:
 
         elif (ner_clf_label == ZmbLabels.ORG.entity_name):
             # This is where its inferred the correct entity class
-            if (ZmbLabels.PUBLIC.is_known(an_entity)):
+
+            if (ZmbLabels.PUBLIC.is_handler(an_entity)):
                 return ZmbLabels.PUBLIC
 
-            if (ZmbLabels.EDUCATIONAL.is_known(an_entity)):
+            if (ZmbLabels.EDUCATIONAL.is_handler(an_entity)):
                 return ZmbLabels.EDUCATIONAL
 
-            if (ZmbLabels.MOVEMENT.is_known(an_entity)):
+            if (ZmbLabels.MOVEMENT.is_handler(an_entity)):
                 return ZmbLabels.MOVEMENT
 
-            if (ZmbLabels.POLICE.is_known(an_entity)):
+            if (ZmbLabels.POLICE.is_handler(an_entity)):
                 return ZmbLabels.POLICE
 
-            if (ZmbLabels.POLITICAL.is_known(an_entity)):
+            if (ZmbLabels.POLITICAL.is_handler(an_entity)):
                 return ZmbLabels.POLITICAL
 
             # If we can't find an appropriate ORG, then we assume its a private ORG
